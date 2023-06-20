@@ -12,8 +12,15 @@ const rightAlign = document.getElementById('right-align');
 
 // Dropdown
 const fontSizeDropDown = document.getElementById('font-size');
+const fontFamilyDropDown = document.getElementById('font-family');
+
+// cut-copy/ paste button
+const cutButton = document.getElementById('cut-button');
+const copyButton = document.getElementById('copy-button');
+const pasteButton = document.getElementById('paste-button');
 
 let currentCell;
+let cutCell = {};
 // constants
 const columns = 26;
 const rows = 100;
@@ -84,6 +91,33 @@ rightAlign.addEventListener('click',()=>{
 fontSizeDropDown.addEventListener('change',()=>{
     currentCell.style.fontSize=fontSizeDropDown.value;
 })
+// Font Family
+fontFamilyDropDown.addEventListener('change',()=>{
+    currentCell.style.fontFamily=fontFamilyDropDown.value;
+})
+
+cutButton.addEventListener("click", () => {
+  cutCell = {
+    style: currentCell.style.cssText,
+    text: currentCell.innerText,
+  };
+  currentCell.innerText = "";
+  currentCell.style = null;
+});
+
+copyButton.addEventListener("click", () => {
+  cutCell = {
+    style: currentCell.style.cssText,
+    text: currentCell.innerText,
+  };
+});
+
+pasteButton.addEventListener("click", () => {
+  if (cutCell.text) {
+    currentCell.style = cutCell.style;
+    currentCell.innerText = cutCell.text;
+  }
+});
 
 function onFocusFn(event){
     // console.log(event);
