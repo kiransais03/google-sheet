@@ -1,6 +1,18 @@
 // Table properties
 const theadRow = document.getElementById("table-heading-row");
 const tbody = document.getElementById("table-body");
+//style buttons
+const boldButton = document.getElementById('bold-btn');
+const italicsButton = document.getElementById('italics-btn');
+const underlineButton = document.getElementById('underline-btn');
+// align buttons
+const leftAlign = document.getElementById('left-align');
+const centerAlign = document.getElementById('center-align');
+const rightAlign = document.getElementById('right-align');
+
+// Dropdown
+const fontSizeDropDown = document.getElementById('font-size');
+
 let currentCell;
 // constants
 const columns = 26;
@@ -27,13 +39,54 @@ for(let row=1;row<=rows;row++){
         let td= document.createElement('td');
         td.setAttribute('contenteditable','true');
         td.setAttribute('id',`${String.fromCharCode(col+65)}${row}`)
+        // this event listener will triger when any cell comes in focus;
         td.addEventListener('focus',(event)=> onFocusFn(event));
         tr.append(td);
     }
     tbody.append(tr);
 }
 
+// BOLD BUTTON
+boldButton.addEventListener("click", () => {
+  if (currentCell.style.fontWeight === "bold") {
+    currentCell.style.fontWeight = "normal";
+  } else currentCell.style.fontWeight = "bold";
+});
+
+// ITALICS
+italicsButton.addEventListener('click',()=>{
+    if(currentCell.style.fontStyle === 'italic'){
+        currentCell.style.fontStyle = 'normal';
+    }
+    else currentCell.style.fontStyle = 'italic';
+})
+
+// underline
+underlineButton.addEventListener("click", () => {
+  if (currentCell.style.textDecoration === "underline") {
+    currentCell.style.textDecoration = "none";
+  } else currentCell.style.textDecoration = "underline";
+});
+
+// Left align button
+leftAlign.addEventListener('click',()=>{
+    currentCell.style.textAlign='left';
+})
+// Center align button
+centerAlign.addEventListener('click',()=>{
+    currentCell.style.textAlign='center';
+})
+// Right align button
+rightAlign.addEventListener('click',()=>{
+    currentCell.style.textAlign='right';
+})
+// font Size
+fontSizeDropDown.addEventListener('change',()=>{
+    currentCell.style.fontSize=fontSizeDropDown.value;
+})
+
 function onFocusFn(event){
+    // console.log(event);
     currentCell=event.target;
     document.getElementById('current-cell').innerText=currentCell.id;
 }
