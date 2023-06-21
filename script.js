@@ -1,6 +1,11 @@
 // Table properties
 const theadRow = document.getElementById("table-heading-row");
 const tbody = document.getElementById("table-body");
+
+// constants
+const columns = 26;
+const rows = 100;
+
 //style buttons
 const boldButton = document.getElementById('bold-btn');
 const italicsButton = document.getElementById('italics-btn');
@@ -9,6 +14,7 @@ const underlineButton = document.getElementById('underline-btn');
 const leftAlign = document.getElementById('left-align');
 const centerAlign = document.getElementById('center-align');
 const rightAlign = document.getElementById('right-align');
+
 
 // Dropdown
 const fontSizeDropDown = document.getElementById('font-size');
@@ -19,11 +25,30 @@ const cutButton = document.getElementById('cut-button');
 const copyButton = document.getElementById('copy-button');
 const pasteButton = document.getElementById('paste-button');
 
+// color input
+const bgColorInput= document.getElementById('bgColor');
+const textColorInput = document.getElementById('textColor');
+
+// clipboard
 let currentCell;
 let cutCell = {};
-// constants
-const columns = 26;
-const rows = 100;
+
+// forming OuterArray
+let matrix = new Array(rows);
+for (let row = 0; row < rows; row++) {
+  // adding innerArrays
+  matrix[row] = new Array(columns);
+  for (col = 0; col < columns; col++) {
+    // fixing innerArrays to empty objects
+    matrix[row][col] = {};
+  }
+}
+
+// -> [
+  // [], // this is my 0th row -> it's storing cols
+  // []
+// ]
+
 
 for (let col = 0; col < columns; col++) {
     let th = document.createElement('th');
@@ -119,8 +144,49 @@ pasteButton.addEventListener("click", () => {
   }
 });
 
+// using input
+bgColorInput.addEventListener("input", () => {
+  currentCell.style.backgroundColor = bgColorInput.value;
+});
+
+// using change
+textColorInput.addEventListener('change',()=>{
+  currentCell.style.color = textColorInput.value;
+});
+
+
 function onFocusFn(event){
     // console.log(event);
     currentCell=event.target;
     document.getElementById('current-cell').innerText=currentCell.id;
 }
+
+// Row * Col
+// 101 * 27
+
+// whole table copy -> array of object
+// [
+  // {},{},
+  // {},{},
+  // {},{},
+// ]
+// A2 -> 1,0
+// 1*(number of cols) + 0 -> 2
+// row -> 1st -> 1*2 + 0th -> 2 // here 0th means colNumber
+// Col -> 0th
+
+// B3 -> row -> 2nd, col-> 1
+// rowIndex*(number of cols)+colindex
+// 2*2+1 ->5
+
+// whole table copy -> array of arrays of objects
+
+// [ -> outer array -> storing rows
+  // [{},{},{}], -> inner array -> storing cols
+  // [{},{},{}],
+  // [{},{},{}],
+  // [{},{},{}],
+// ]
+// 2dMatrix[1][0]
+// 2dMatrix[row][col]
+// rows-> number of arrays inside my main array
