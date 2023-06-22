@@ -28,10 +28,13 @@ const pasteButton = document.getElementById('paste-button');
 // color input
 const bgColorInput= document.getElementById('bgColor');
 const textColorInput = document.getElementById('textColor');
+const uploadJsonFile = document.getElementById('jsonFile');
+
 
 // clipboard
 let currentCell;
 let cutCell = {};
+
 
 // forming OuterArray
 let matrix = new Array(rows);
@@ -195,6 +198,63 @@ function onFocusFn(event){
     document.getElementById('current-cell').innerText=currentCell.id;
 }
 
+function downloadJson(){
+  // I am converting this matrix to string
+  const matrixString = JSON.stringify(matrix);
+
+  // converting text form of matrix to downloadable form(file)
+  const blob = new Blob([matrixString],{type:'application/json'});
+
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  // naming the file which will be downloaded;
+  link.download = 'table.json'; // data.json is name of file
+  // I add this link in my DOM to make it clickable
+  document.body.appendChild(link);
+  link.click();
+  // remove link
+  document.body.removeChild(link);
+}
+
+uploadJsonFile.addEventListener('change',readJSONfileFn);
+
+function readJSONfileFn(event){
+  const file = event.target.files[0];
+  if(file){
+    const reader = new FileReader();
+    reader.readAsText(file);
+    reader.onload = function(e){
+      // reader has read the file and converted it into
+      // code
+      // fileContent is in string
+      const fileContent = e.target.result;
+      try{
+        const fileContentJSON = JSON.parse(fileContent);
+        matrix=fileContentJSON;
+
+        // iterating over matrix and saving it in my html table
+        fileContentJSON.forEach((row)=>{
+          row.forEach((cell)=>{
+            // cell is reflection object of my currentCell
+            // in matrix
+            if(cell.id){
+              // respecting currentCell of cell 
+              // in html or table
+              var currentCell = document.getElementById(cell.id);
+              currentCell.innerText=cell.text;
+              currentCell.style.cssText=cell.style;
+            }
+          })
+        })
+      }
+      catch(err){
+        console.log('error in reading json file',err);
+      }
+    };
+  }
+}
+
+
 // Row * Col
 // 101 * 27
 
@@ -256,3 +316,7 @@ function onFocusFn(event){
   // A -> 0
 
   // matrix[(row-1)(letter to number -65)]
+
+  // multiple sheets
+  // local storage
+  // API, handling errors in APIs
