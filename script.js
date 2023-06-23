@@ -30,6 +30,9 @@ const bgColorInput= document.getElementById('bgColor');
 const textColorInput = document.getElementById('textColor');
 const uploadJsonFile = document.getElementById('jsonFile');
 
+// Add sheet button
+const addSheetButton = document.getElementById('add-sheet-btn');
+const sheetNumHeading = document.getElementById('sheet-num');
 
 // clipboard
 let currentCell;
@@ -47,6 +50,9 @@ for (let row = 0; row < rows; row++) {
   }
 }
 
+// things related to multiple sheets
+let numSheets = 1; // number of sheets
+let currSheetNum = 1; // currentSheet
 // -> [
   // [], // this is my 0th row -> it's storing cols
   // []
@@ -254,6 +260,102 @@ function readJSONfileFn(event){
   }
 }
 
+addSheetButton.addEventListener('click',()=>{
+  // 
+  // we clearing we are saving
+  if(numSheets===1){
+    var tempArr = [matrix]; // virtual memory of my matrix
+    localStorage.setItem('arrMatrix',JSON.stringify(tempArr));
+  } else{
+    var previousSheetArr = JSON.parse(localStorage.getItem('arrMatrix'));
+    var updatedArr = [...previousSheetArr,matrix];
+    localStorage.setItem('arrMatrix',JSON.stringify(updatedArr));
+  }
+  // update variable related to my sheet
+  numSheets++;
+  currSheetNum=numSheets;
+
+  // cleanup my virtual memory
+  for(let row=0;row<rows;row++){
+    matrix[row]=new Array(columns);
+    for(let col=0;col<columns;col++){
+      matrix[row][col]={};
+    }
+  }
+
+// table body will be none for my new sheet;
+  tbody.innerHTML=``;
+  for(let row=1;row<=rows;row++){
+    let tr = document.createElement('tr');
+    let th=document.createElement('th');
+    th.innerText=row;
+    tr.append(th);
+    // looping from A to Z
+    for (let col = 0; col < columns; col++) {
+      let td=document.createElement('td');
+      td.setAttribute("contenteditable", "true");
+      td.setAttribute('id',`${String.fromCharCode(col+65)}${row}`);
+      td.addEventListener('focus',(event)=>onFocusFn(event));
+      td.addEventListener('input',(event)=>onInputFn(event));
+      tr.append(td);
+    }
+    tbody.append(tr);
+  }
+  sheetNumHeading.innerText="Sheet No. " + currSheetNum;
+})
+
+document.getElementById("sheet-1").addEventListener("click", () => {
+  var myArr = JSON.parse(localStorage.getItem("arrMatrix"));
+  let tableData = myArr[0]; // matrix;
+  currSheetNum = 1;
+  matrix = tableData; // my matrix maintain currentTableData
+  tableData.forEach((row) => {
+    row.forEach((cell) => {
+      if (cell.id) {
+        var mycell = document.getElementById(cell.id);
+        mycell.innerText = cell.text;
+        mycell.style.cssText = cell.style;
+      }
+    });
+  });
+  sheetNumHeading.innerText="Sheet No. "+currSheetNum;
+});
+
+document.getElementById("sheet-2").addEventListener("click", () => {
+  var myArr = JSON.parse(localStorage.getItem("arrMatrix"));
+  let tableData = myArr[1]; // matrix;
+  matrix = tableData; // my matrix maintain currentTableData
+  currSheetNum = 2;
+  tableData.forEach((row) => {
+    row.forEach((cell) => {
+      if (cell.id) {
+        var mycell = document.getElementById(cell.id);
+        mycell.innerText = cell.text;
+        mycell.style.cssText = cell.style;
+      }
+    });
+  });
+  sheetNumHeading.innerText="Sheet No. "+currSheetNum;
+});
+
+document.getElementById("sheet-3").addEventListener("click", () => {
+  var myArr = JSON.parse(localStorage.getItem("arrMatrix"));
+  let tableData = myArr[2]; // matrix;
+  currSheetNum = 3;
+  matrix = tableData; // my matrix maintain currentTableData
+  tableData.forEach((row) => {
+    row.forEach((cell) => {
+      if (cell.id) {
+        var mycell = document.getElementById(cell.id);
+        mycell.innerText = cell.text;
+        mycell.style.cssText = cell.style;
+      }
+    });
+  });
+  sheetNumHeading.innerText="Sheet No. "+currSheetNum;
+});
+
+// matrix is representing virtual memory of my currentTable
 
 // Row * Col
 // 101 * 27
@@ -320,3 +422,10 @@ function readJSONfileFn(event){
   // multiple sheets
   // local storage
   // API, handling errors in APIs
+
+
+// css
+// cut copy paste modification
+// onload it should show sheet #1
+// dynamic buttons of sheet 1 sheet2 on click of add sheet
+// dynamic functionalty for `sheet-${i}`
